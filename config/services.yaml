@@ -1,0 +1,21 @@
+parameters:
+    QARD_API_KEY: '%env(QARD_API_KEY)%'
+    QARD_API_BASE_URL: '%env(QARD_API_BASE_URL)%'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    App\Service\QardClient:
+        arguments:
+            $httpClient: '@http_client'
+            $params: '@parameter_bag'
+            $logger: '@logger'

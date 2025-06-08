@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Entreprises{% endblock %}
+
+{% block body %}
+    <h1>Liste des entreprises</h1>
+
+    <table border="1" cellspacing="0" cellpadding="8">
+        <tr>
+            <th>Nom</th>
+            <th>SIREN</th>
+            <th>Date de création</th>
+            <th>Statut</th>
+            <th>Action</th>
+        </tr>
+        {% for company in companies %}
+            <tr>
+                <td>{{ company.name }}</td>
+                <td>{{ company.siren }}</td>
+                <td>{{ company.created_at }}</td>
+                <td>{{ company.status }}</td>
+                <td>
+                    {% if company.redirect_url is defined and company.redirect_url is not empty %}
+                        <a href="{{ company.redirect_url }}" target="_blank">Connecter</a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
