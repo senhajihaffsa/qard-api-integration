@@ -64,4 +64,28 @@ class CompanyController extends AbstractController
             $uuid
         ) === 1;
     }
+
+    /**
+ * @Route("/companies/{id}", name="companies_show")
+ */
+public function show(string $id): Response
+{
+    if (!$this->isValidUuid($id)) {
+        throw $this->createNotFoundException('Identifiant utilisateur invalide');
+    }
+
+    $this->qardClient->syncUserData($id);
+
+    $profile = $this->qardClient->getCompanyProfile($id);
+    $officers = $this->qardClient->getCompanyOfficers($id);
+    $statements = $this->qardClient->getFinancialStatements($id);
+
+    return $this->render('company/show.html.twig', [
+        'id' => $id,
+        'profile' => $profile,
+        'officers' => $officers,
+        'statements' => $statements,
+    ]);
+}
+
 }

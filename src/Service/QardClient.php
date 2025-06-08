@@ -74,16 +74,24 @@ class QardClient
         return $this->fetch("/api/v6/users/{$userId}/financial-statements", "getFinancialStatements");
     }
 
-    public function syncUserData(string $userId): void
-    {
-        try {
-            $this->httpClient->request('POST', "{$this->baseUrl}/api/v6/users/{$userId}/sync", [
-                'headers' => $this->getHeaders()
-            ]);
-        } catch (\Throwable $e) {
-            $this->logger->error("Qard API error [syncUserData]: " . $e->getMessage());
+        public function syncUserData(string $userId): bool
+{
+    try {
+        $response = $this->httpClient->request('POST', "{$this->baseUrl}/api/v6/users/{$userId}/sync", [
+            'headers' => $this->getHeaders()
+        ]);
+
+        if ($response->getStatusCode() === 202 || $response->getStatusCode() === 200) {
+            return true;
         }
+
+        $this->logger->warning("Qard API [syncUserData]: Sync failed with status " . $response->getStatusCode());
+        return false;
+    } catch (\Throwable $e) {
+        $this->logger->error("Qard API error [syncUserData]: " . $e->getMessage());
+        return false;
     }
+}
 
     private function fetch(string $endpoint, string $context): ?array
     {
